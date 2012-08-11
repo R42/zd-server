@@ -1,0 +1,17 @@
+{
+  "author": "R42 <hi@r42.in>",
+  "maintainers": [
+    "Igor Soarez <soarez@r42.in>",
+    "Thiago Dantas <dantas@r42.in>",
+    "João Duarte <jd@r42.in>"
+  ],
+  "name": "zd-server",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/R42/zd-server.git"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
