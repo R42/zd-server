@@ -13,5 +13,8 @@
   },
   "engines": {
     "node": "*"
+  },
+  "dependencies": {
+    "restify": "~1.4.4"
   }
 }
