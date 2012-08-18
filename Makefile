@@ -1,5 +1,5 @@
 REPORTER = spec
-OPTS = -t 5000
+OPTS = --timeout 5000
 
 test: 
 	./node_modules/.bin/mocha $(OPTS) --reporter $(REPORTER)
@@ -7,4 +7,4 @@ test:
 .PHONY: test
 
 watch: 
-	./node_modules/.bin/mocha $(OPTS) --reporter min -w
+	./node_modules/.bin/mocha $(OPTS) --reporter min --watch --bail
