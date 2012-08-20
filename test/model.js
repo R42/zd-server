@@ -150,5 +150,15 @@ describe('model', function() {
       game.cup.length.should.equal(10);
     });
 
+    it('should have a timestamp', function() {
+      game.should.have.property('modified');
+      game.modified.should.be.below(+new Date());
+    });
+
+    it('should update the timestamp when the client model is requested', function() {
+      var old = game.modified;
+      game.clientModel();
+      old.should.be.below(game.modified);
+    });
   });
 });
