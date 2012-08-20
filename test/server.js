@@ -61,7 +61,7 @@ describe('server', function () {
   it('should accept gets to the /games/id', function(done) {
     client.get('/games/'+game.id, function(err, req, res, obj) {
       res.statusCode.should.equal(200);
-      done()
+      done();
     });
   });
 
@@ -71,8 +71,7 @@ describe('server', function () {
     client.put('/games/'+game.id, game, function(err, req, res, obj) {
       res.statusCode.should.equal(200);
       obj.nickname.should.equal(game.nickname);
-      console.dir(obj)
-      done()
+      done();
     });
   });
 
