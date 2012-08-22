@@ -160,5 +160,15 @@ describe('model', function() {
       game.clientModel();
       old.should.be.below(game.modified);
     });
+
+    it('should count the rounds', function() {
+      game.should.have.property('rounds');
+      
+      var value = game.rounds;
+      for(var i=0; i<1000; ++i)
+        game.roll();
+
+      game.rounds.should.be.above(value);
+    });
   });
 });

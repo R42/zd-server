@@ -61,6 +61,8 @@ describe('server', function () {
   it('should accept gets to the /games/id', function(done) {
     client.get('/games/'+game.id, function(err, req, res, obj) {
       res.statusCode.should.equal(200);
+      should.not.exist(err);
+      should.exist(obj);
       done();
     });
   });
@@ -70,7 +72,24 @@ describe('server', function () {
     game.action = 'roll';
     client.put('/games/'+game.id, game, function(err, req, res, obj) {
       res.statusCode.should.equal(200);
+      should.not.exist(err);
+      should.exist(obj);
       obj.nickname.should.equal(game.nickname);
+      done();
+    });
+  });
+
+  it('should provide the player ranking in /ranking', function(done) {
+    client.get('/ranking', function(err, req, res, obj) {
+      res.statusCode.should.equal(200);
+      should.not.exist(err);
+      should.exist(obj);
+      obj.should.be.an.instanceOf(Array);
+      obj.length.should.be.above(0);
+      obj[0].should.have.property('position');
+      obj[0].should.have.property('nickname');
+      obj[0].should.have.property('vp');
+      obj[0].should.have.property('rounds');
       done();
     });
   });
