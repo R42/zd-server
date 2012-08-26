@@ -25,7 +25,8 @@ var serverOptions = [{
   games: games
 }];
 
-if (existsSync('server.key') && existsSync('server.crt')) {
+var certificate = process.env['zdcertificate'] || 'server';
+if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
   serverOptions.push({
     port: process.env['zdsport'] || 3443,
     games: games,
