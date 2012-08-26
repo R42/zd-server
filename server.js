@@ -31,8 +31,8 @@ if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
     port: process.env['zdsport'] || 3443,
     games: games,
     secure: {
-      key: fs.readFileSync('server.key'),
-      certificate: fs.readFileSync('server.crt')
+      key: fs.readFileSync(certificate + '.key'),
+      certificate: fs.readFileSync(certificate + 'server.crt')
     }
   });
 }
