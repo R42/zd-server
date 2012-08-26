@@ -32,7 +32,7 @@ if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
     games: games,
     secure: {
       key: fs.readFileSync(certificate + '.key'),
-      certificate: fs.readFileSync(certificate + 'server.crt')
+      certificate: fs.readFileSync(certificate + '.crt')
     }
   });
 }
