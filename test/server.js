@@ -11,7 +11,13 @@ describe('server', function () {
   before(function(done) {
 
     var port = Math.floor(Math.random() * 500 + 3000);
-    require('../lib/server')(port, function(serverObject) {
+    var games = [];
+    var serverOptions = {
+      port: port,
+      games: games
+    };
+
+    require('../lib/server')(serverOptions, function(serverObject) {
       server = serverObject;
       client = restify.createJsonClient({
         url: 'http://localhost:'+port
