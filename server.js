@@ -13,32 +13,29 @@ setInterval(function() {
   }
 }, 10 * 60 * 1000);
 
-
 var fs = require('fs');
 var path = require('path');
 var existsSync = fs.existsSync || path.existsSync;
 
 var service =  require('./lib/service');
 
-var serverOptions = [{
+var httpServer = service({
   port: process.env['zdport'] || 3080,
   games: games
-}];
+}, function (server) {
+  console.log('%s listening at %s', server.name, server.url);
+});
 
 var certificate = process.env['zdcertificate'] || 'server';
 if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
-  serverOptions.push({
+  service({
     port: process.env['zdsport'] || 3443,
     games: games,
     secure: {
       key: fs.readFileSync(certificate + '.key'),
       certificate: fs.readFileSync(certificate + '.crt')
     }
+  }, function (server) {
+    console.log('secure %s listening at %s', server.name, server.url);
   });
 }
-
-serverOptions.forEach(function(options) {
-  service(options, function (server) {
-    console.log('%s listening at %s', server.name, server.url);
-  });
-});
