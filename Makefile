@@ -1,5 +1,5 @@
 REPORTER = spec
-OPTS = --timeout 5000
+OPTS = --timeout 5000 --growl
 
 test: 
 	./node_modules/.bin/mocha $(OPTS) --reporter $(REPORTER)
