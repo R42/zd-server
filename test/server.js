@@ -4,7 +4,7 @@ var restify = require('restify');
 
 var client, server;
 
-describe('server', function () {
+describe('service', function () {
 
   var game;
 
@@ -17,7 +17,7 @@ describe('server', function () {
       games: games
     };
 
-    require('../lib/server')(serverOptions, function(serverObject) {
+    require('../lib/service')(serverOptions, function(serverObject) {
       server = serverObject;
       client = restify.createJsonClient({
         url: 'http://localhost:'+port

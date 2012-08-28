@@ -18,7 +18,7 @@ var fs = require('fs');
 var path = require('path');
 var existsSync = fs.existsSync || path.existsSync;
 
-var server =  require('./lib/server');
+var service =  require('./lib/service');
 
 var serverOptions = [{
   port: process.env['zdport'] || 3080,
@@ -38,7 +38,7 @@ if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
 }
 
 serverOptions.forEach(function(options) {
-  server(options, function (server) {
+  service(options, function (server) {
     console.log('%s listening at %s', server.name, server.url);
   });
 });
