@@ -1,7 +1,8 @@
 var should = require('should');
-
+var EventEmitter = require('events').EventEmitter;
 var restify = require('restify');
 
+var ee = new EventEmitter();
 var client, server;
 
 describe('service', function () {
@@ -14,7 +15,8 @@ describe('service', function () {
     var games = [];
     var serverOptions = {
       port: port,
-      games: games
+      games: games,
+      ee: ee
     };
 
     require('../lib/service')(serverOptions, function(serverObject) {
@@ -98,6 +100,65 @@ describe('service', function () {
       obj[0].should.have.property('rounds');
       done();
     });
+  });
+
+  it('should emit \'playerStartedGame\' when a player starts a new game', function(done) {
+    ee.once('playerStartedGame', function(game) {
+      should.exist(game);
+      game.nickname.should.equal('Rulio');
+      done();
+    });
+    client.post('/games', { nickname: 'Rulio' }, function(err, req, res, obj) {});
+  });
+
+  it('should emit \'playerShotgunned\' when a player is shotgunned', function(done) {
+    var stop = false;
+
+    ee.once('playerShotgunned', function(game) {
+      should.exist(game);
+      game.isShotgunned().should.be.true;
+      stop = true;
+    });
+
+    var roll = function() {
+      game.action = 'roll';
+
+      client.put('/games/'+game.id, game, function(err, req, res, obj) {
+        if (stop)
+          done();
+        else
+          process.nextTick(roll);
+      });
+    };
+
+    roll();
+  });
+
+  it('should emit \'playerVictory\' when a player scores a VP', function(done) {
+    var stop = false;
+
+    ee.once('playerVictory', function(game) {
+      should.exist(game);
+      game.hasWonVP().should.be.true;
+      stop = true;
+    });
+
+    var roll = function() {
+
+      if (game.action != 'stop' && game.brains.length > 0)
+        game.action = 'stop';
+      else
+        game.action = 'roll';
+
+      client.put('/games/'+game.id, game, function(err, req, res, obj) {
+        if (stop)
+          done();
+        else
+          process.nextTick(roll);
+      });
+    };
+
+    roll();
   });
 
   after(function() { server.close(); });

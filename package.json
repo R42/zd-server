@@ -5,7 +5,7 @@
     "João Duarte <jd@r42.in>"
   ],
   "name": "zd-server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": {
     "type": "git",
     "url": "git://github.com/R42/zd-server.git"
