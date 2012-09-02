@@ -13,17 +13,24 @@ setInterval(function() {
   }
 }, 10 * 60 * 1000);
 
+var EventEmitter = require('events').EventEmitter;
+var ee = new EventEmitter();
+
 var fs = require('fs');
 var path = require('path');
 var existsSync = fs.existsSync || path.existsSync;
 
 var service =  require('./lib/service');
+var notifications = require('./lib/notifications');
 
 var httpServer = service({
   port: process.env['zdport'] || 3080,
-  games: games
+  games: games,
+  ee: ee
 }, function (server) {
   console.log('%s listening at %s', server.name, server.url);
+
+  notifications({port: server.server, ee: ee});
 });
 
 var certificate = process.env['zdcertificate'] || 'server';
@@ -31,11 +38,13 @@ if (existsSync(certificate+'.key') && existsSync(certificate+'.crt')) {
   service({
     port: process.env['zdsport'] || 3443,
     games: games,
+    ee: ee,
     secure: {
       key: fs.readFileSync(certificate + '.key'),
       certificate: fs.readFileSync(certificate + '.crt')
     }
   }, function (server) {
     console.log('secure %s listening at %s', server.name, server.url);
+    notifications({port: server.server, ee: ee});
   });
 }
