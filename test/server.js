@@ -103,9 +103,9 @@ describe('service', function () {
   });
 
   it('should emit \'playerStartedGame\' when a player starts a new game', function(done) {
-    ee.once('playerStartedGame', function(game) {
-      should.exist(game);
-      game.nickname.should.equal('Rulio');
+    ee.once('playerStartedGame', function(obj) {
+      should.exist(obj);
+      obj.nickname.should.equal('Rulio');
       done();
     });
     client.post('/games', { nickname: 'Rulio' }, function(err, req, res, obj) {});
@@ -114,9 +114,9 @@ describe('service', function () {
   it('should emit \'playerShotgunned\' when a player is shotgunned', function(done) {
     var stop = false;
 
-    ee.once('playerShotgunned', function(game) {
-      should.exist(game);
-      game.isShotgunned().should.be.true;
+    ee.once('playerShotgunned', function(obj) {
+      should.exist(obj);
+      obj.isShotgunned().should.be.true;
       stop = true;
     });
 
@@ -124,6 +124,7 @@ describe('service', function () {
       game.action = 'roll';
 
       client.put('/games/'+game.id, game, function(err, req, res, obj) {
+        game = obj;
         if (stop)
           done();
         else
@@ -136,21 +137,76 @@ describe('service', function () {
 
   it('should emit \'playerVictory\' when a player scores a VP', function(done) {
     var stop = false;
+    var action;
 
-    ee.once('playerVictory', function(game) {
-      should.exist(game);
-      game.hasWonVP().should.be.true;
+    ee.once('playerVictory', function(obj) {
+      should.exist(obj);
+      obj.hasWonVP().should.be.true;
       stop = true;
     });
 
     var roll = function() {
 
-      if (game.action != 'stop' && game.brains.length > 0)
-        game.action = 'stop';
-      else
-        game.action = 'roll';
-
       client.put('/games/'+game.id, game, function(err, req, res, obj) {
+
+        if (action != 'stop' && obj.brains.length > 0)
+          action = 'stop';
+        else
+          action = 'roll';
+
+        game = obj;
+        game.action = action;
+
+        if (stop)
+          done();
+        else
+          process.nextTick(roll);
+      });
+    };
+
+    roll();
+  });
+
+  it('should emit \'playerOnARoll\' when a player gets over 5 brains', function(done) {
+    var stop = false;
+    game.action = 'roll';
+
+    ee.once('playerOnARoll', function(obj) {
+      should.exist(obj);
+      obj.brains.length.should.be.above(5);
+      stop = true;
+    });
+
+    var roll = function() {
+      client.put('/games/'+game.id, game, function(err, req, res, obj) {
+        if (stop)
+          done();
+        else
+          process.nextTick(roll);
+      });
+    };
+
+    roll();
+  });
+
+  it('should emit \'playerPlayedItSafe\' when a player stops and collects brains', function(done) {
+    var stop = false;
+    var action = 'roll';
+
+    ee.once('playerPlayedItSafe', function(obj) {
+      should.exist(obj);
+      obj.score.should.be.above(0);
+      stop = true;
+    });
+
+    var roll = function() {
+
+      if (game.brains.length > 0)
+        action = 'stop';
+
+      client.put('/games/'+game.id, {id: game.id, action: action}, function(err, req, res, obj) {
+        game = obj;
+        
         if (stop)
           done();
         else
